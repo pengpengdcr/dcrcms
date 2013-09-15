@@ -1,0 +1,25 @@
+body{
+	padding-top: 50px;
+}
+.table-form{
+	
+}
+.table-form th,.table-form td{
+	vertical-align:middle;
+	border-width:0px;
+}
+.table-form th:after{
+	content:":";
+}
+.table-form th{
+	text-align:right;
+}
+.table-form tfoot{
+	border-top:1px solid #ddd;
+}
+.table-form tfoot td{
+	text-align:center;
+}
+.table-form input {
+	margin-bottom:0px;
+}

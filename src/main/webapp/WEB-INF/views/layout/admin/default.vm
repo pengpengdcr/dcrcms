@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>$!_title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<link href="/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/resources/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+<link href="/resources/dcrcms/css/admin.css" rel="stylesheet" />
+<script src="/resources/jquery/jquery-1.8.3.js"></script>
+<script src="/resources/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+#parse("layout/admin/menu.vm")
+$screen_content
+#parse("layout/admin/foot.vm")
+</div>
+</body>
+</html>

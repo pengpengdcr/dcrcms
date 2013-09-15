@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven />
+	<mvc:default-servlet-handler />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.dcr.cms.web" />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources 
+		directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<!-- This bean sets up the Velocity environment for us based on a root path for templates. Optionally, a properties file 
+		can be specified for more control over the Velocity environment, but the defaults are pretty sane for file based template 
+		loading. -->
+	<bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/views/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="input.encoding">UTF-8</prop>
+				<prop key="output.encoding">UTF-8</prop>
+				<prop key="velocimacro.library">macro/macro.vm</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="stringUtilsTool" class="org.apache.commons.lang3.StringUtils" />
+	<bean id="dateTool" class="org.apache.velocity.tools.generic.DateTool" />
+	<bean id="numberTool" class="org.apache.velocity.tools.generic.NumberTool" />
+	<bean id="enumTool" class="com.dcr.cms.util.EnumTool">
+		<property name="packages">
+			<list>
+				<value>com.dcr.cms.enums</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="velocityBaseViewResolver" abstract="true"
+		class="org.springframework.web.servlet.view.velocity.ExtendVelocityLayoutViewResolver">
+		<property name="cache" value="false" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".vm" />
+		<property name="contentType" value="text/html;charset=utf-8" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="layoutKey" value="layout" />
+		<property name="screenContentKey" value="screen_content" />
+		<property name="toolsMap">
+			<map>
+				<entry key="stringUtils" value-ref="stringUtilsTool" />
+				<entry key="dateTool" value-ref="dateTool" />
+				<entry key="numberTool" value-ref="numberTool" />
+				<entry key="enumTool" value-ref="enumTool" />
+			</map>
+		</property>
+		<property name="layoutMap">
+			<map>
+				<entry key="channel/view" value="layout/admin/content.vm"/>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="adminViewResolver" parent="velocityBaseViewResolver">
+		<property name="layoutUrl" value="layout/admin/default.vm" />
+	</bean>
+
+</beans>

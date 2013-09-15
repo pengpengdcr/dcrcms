@@ -1,0 +1,22 @@
+#set($_title = "用户查看 - DCRCMS")
+<h4>用户查看</h4>
+<table class="table table-bordered table-striped table-hover">
+	<tr>
+		<th>id</th>
+		<th>用户名</th>
+		<th>用户组</th>
+		<th>email</th>
+		<th>状态</th>
+		<th>创建时间</th>
+		<th>修改时间</th>
+	</tr>
+	<tr>
+		<td>${user.id}</td>
+		<td>${user.userName}</td>
+		<td>${user.userGroup.description}</td>
+		<td>${user.email}</td>
+		<td>${user.status.description}</td>
+		<td>$!dateTool.format("yyyy-MM-dd HH:mm:ss", ${user.createTime})</td>
+		<td>$!dateTool.format("yyyy-MM-dd HH:mm:ss", ${user.modifyTime})</td>
+	</tr>
+</table>

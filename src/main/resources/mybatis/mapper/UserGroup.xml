@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dcr.cms.dao.UserGroupDao">
+
+	<resultMap id="userGroupMap" type="UserGroup">
+		<id property="id" column="id" />
+		<result property="groupName" column="group_name" />
+		<result property="description" column="description" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyTime" column="modify_time" />
+	</resultMap>
+
+	<sql id="userGroupcloumns">
+		group_name,description,create_time,modify_time
+	</sql>
+
+	<!-- 分页条件查询 -->
+	<select id="query" parameterType="object" resultMap="userGroupMap">
+		select id, <include refid="userGroupcloumns" />
+		from user_group
+		<trim prefix="where" prefixOverrides="and">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(groupName)">
+				and group_name like CONCAT('%',#{groupName},'%')
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(description)">
+				and description like CONCAT('%',#{description},'%')
+			</if>
+		</trim>
+		order by modify_time desc
+		limit #{limit},#{offset}
+	</select>
+
+	<!-- 分页条件查询 -COUNT -->
+	<select id="queryCount" parameterType="object" resultType="long">
+		select count(id)
+		from user_group
+		<trim prefix="where" prefixOverrides="and">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(groupName)">
+				and group_name like CONCAT('%',#{groupName},'%')
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(description)">
+				and description like CONCAT('%',#{description},'%')
+			</if>
+		</trim>
+	</select>
+
+	<!-- 查找所有用户组 -->
+	<select id="getAll" resultMap="userGroupMap">
+		select id, <include refid="userGroupcloumns"/>
+		from user_group
+		order by group_name
+	</select>
+
+	<!-- 根据id查找 -->
+	<select id="getById" parameterType="long" resultMap="userGroupMap">
+		select id, <include refid="userGroupcloumns"/>
+		from user_group
+		where id = #{id}
+	</select>
+
+	<!-- 根据groupName查找 -->
+	<select id="getByGroupName" parameterType="string" resultMap="userGroupMap">
+		select id, <include refid="userGroupcloumns"/>
+		from user_group
+		where group_name = #{groupName}
+	</select>
+
+	<!-- 添加 -->
+	<insert id="add" parameterType="UserGroup" useGeneratedKeys="true" keyProperty="id">
+		insert into user_group ( <include refid="userGroupcloumns"/> )
+		values (#{groupName}, #{description},now(),now())
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="long">
+		delete from user_group where id = #{id}
+	</delete>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="UserGroup">
+		update user_group
+		set
+		group_name = #{groupName},
+		description = #{description},
+		modify_time = now()
+		where id = #{id}
+	</update>
+
+</mapper> 

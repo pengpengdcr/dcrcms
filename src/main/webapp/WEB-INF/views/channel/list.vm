@@ -1,0 +1,46 @@
+#set($layout = "layout/admin/default.vm")
+#set($_title = "栏目管理 - DCRCMS")
+<h4>栏目管理</h4>
+<link rel="stylesheet" href="/resources/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<style type="text/css">
+.content_wrap{
+	height:600px;
+	border:1px solid black;
+	overflow:scroll;
+}
+</style>
+<div class="row-fluid">
+<div class="content_wrap span2">
+	<div class="zTreeDemoBackground left">
+		<ul id="channelTree" class="ztree"></ul>
+	</div>
+</div>
+<div class="span10">
+    <iframe id="main" src="/user/list.html" frameborder="0" width="100%" height="600"></iframe>
+</div>
+</div>
+<script type="text/javascript" src="/resources/zTree/js/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript">
+var setting = {
+	data: {
+		simpleData: {
+			enable: true
+		}
+	}
+};
+
+var channels = [
+#if($!channelList && $!channelList.size() > 0)
+#set($count = $!channelList.size())
+#set($i = 0)
+#foreach($!item in ${channelList})
+{"id":"${item.id}", "pId":"$!{item.parent.id}", "name":"${item.name}","isParent":true #if(${item.id} == 1), "open":true #end}#if($i < ($count - 1)),#end
+#set($i = $i + 1)
+#end
+#end
+];
+
+$(document).ready(function(){
+	$.fn.zTree.init($("#channelTree"), setting, channels);
+});
+</script>

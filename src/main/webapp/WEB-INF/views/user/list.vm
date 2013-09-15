@@ -1,0 +1,74 @@
+#set($_title = "用户管理 - DCRCMS")
+<h4>用户管理</h4>
+<form action="" id="" name="" method="get">
+	<input type="hidden" name="pageNum" value="$!query.pageNum" />
+	<input type="hidden" name="pageSize" value="$!query.pageSize" />
+	<table class="table table-form well">
+		<tr>
+			<th>用户名</th>
+			<td><input type="text" id="userName" name="userName" value="$!query.userName" /></td>
+			<th>邮箱</th>
+			<td><input type="text" id="email" name="email" value="$!query.email" /></td>
+			<th>用户组</th>
+			<td>
+                <select id="userGroupId" name="userGroupId">
+					<option value="">请选择</option>
+					#foreach($item in $!userGroupList)
+						<option value="$!item.id" #if($!query.userGroupId == $!item.id) selected="selected" #end>$!item.description</option>
+					#end
+				</select>
+			</td>
+			<th>状态</th>
+			<td>
+				<select id="status" name="status">
+                    <option value="">请选择</option>
+					#showOptionsByEnum("UserStatus","$!query.status")
+                </select>
+			</td>
+		</tr>
+		<tfoot>
+			<tr>
+				<td colspan="8">
+					<input type="submit" class="btn btn-primary" value="查询"/>
+					<input type="reset" class="btn" value="重置"/>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</form>
+
+<table class="table table-bordered table-striped table-hover">
+	<tr>
+		<th>id</th>
+		<th>用户名</th>
+		<th>用户组</th>
+		<th>email</th>
+		<th>状态</th>
+		<th>创建时间</th>
+		<th>修改时间</th>
+	</tr>
+	#if($!page && $!page.resultList && $!page.resultList.size() > 0)
+	#foreach($!item in ${page.resultList})
+		<tr>
+			<td>${item.id}</td>
+			<td>${item.userName}</td>
+			<td>${item.userGroup.description}</td>
+			<td>${item.email}</td>
+			<td>${item.status.description}</td>
+			<td>$!dateTool.format("yyyy-MM-dd HH:mm:ss", ${item.createTime})</td>
+			<td>$!dateTool.format("yyyy-MM-dd HH:mm:ss", ${item.modifyTime})</td>
+		</tr>
+	#end
+	#end
+</table>
+<div class="row-fluid">
+	<div class="span4" style="line-height:30px;">显示第$!page.getPageStart()~$!page.getPageEnd()条记录，共$!page.totalCount条记录</div>
+    <div class="span8">
+    	<div class="pagination pagination-right" style="margin:0px 0px;">
+          <ul>
+            <li class="disabled"><a href="#">&laquo;</a></li>
+            <li class="active"><a href="#">1</a></li>
+          </ul>
+        </div>
+    </div>
+</div>

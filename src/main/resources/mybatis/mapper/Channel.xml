@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dcr.cms.dao.ChannelDao">
+
+	<resultMap id="channelMap" type="Channel">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="path" column="path" />
+		<result property="description" column="description" />
+		<result property="channelTemplate" column="channel_template" />
+		<result property="channelListTemplate" column="channel_list_template" />
+		<result property="channelContentTemplate" column="channel_content_template" />
+		<result property="metaTitle" column="meta_title" />
+		<result property="metaKeywords" column="meta_keywords" />
+		<result property="metaDescription" column="meta_description" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyTime" column="modify_time" />
+		<association property="parent" column="parent_id" select="getById" />
+	</resultMap>
+	
+	<sql id="channelColumns">
+		parent_id,name,path,description,channel_template,channel_list_template,
+		channel_content_template,meta_title,meta_keywords,meta_description,create_time,modify_time
+	</sql>
+	
+	<!-- 分页条件查询 -->
+	<select id="query" parameterType="object" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>
+		from channel
+		<trim prefix="where" prefixOverrides="and">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(parentId)">
+				and parent_id = #{parentId}
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(name)">
+				and name = #{name}
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(status)">
+				and path = #{path}
+			</if>
+		</trim>
+		order by modify_time desc
+		limit #{limit},#{offset}
+	</select>
+
+	<!-- 分页条件查询 -COUNT -->
+	<select id="queryCount" parameterType="object" resultType="long">
+		select count(id)
+		from channel
+		<trim prefix="where" prefixOverrides="and">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(parentId)">
+				and parent_id = #{parentId}
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(name)">
+				and name = #{name}
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(status)">
+				and path = #{path}
+			</if>
+		</trim>
+	</select>
+
+	<!-- 根据id查找 -->
+	<select id="getById" parameterType="long" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>	
+		from channel
+		where id = #{id}
+	</select>
+	
+	<!-- 根据parentId查找 -->
+	<select id="getByParentId" parameterType="long" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>	
+		from channel
+		where parent_id = #{parentId}
+	</select>
+
+	<!-- 根据parentId和name查找 -->
+	<select id="getByParentIdAndName" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>
+		from channel
+		where parent_id = #{parentId} and name = #{name}
+	</select>
+	
+	<!-- 根据parentId和path查找 -->
+	<select id="getByParentIdAndPath" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>
+		from channel
+		where parent_id = #{parentId} and path = #{path}
+	</select>
+	
+	<!-- 查询所有 -->
+	<select id="getAll" resultMap="channelMap">
+		select id, <include refid="channelColumns"/>
+		from channel
+	</select>
+	
+	<!-- 添加 -->
+	<insert id="add" parameterType="Channel" useGeneratedKeys="true" keyProperty="id">
+		insert into channel 
+		( <include refid="channelColumns"/> )
+		values 
+		(#{parentId},#{name},#{path},#{description},#{channelTemplate},
+		#{channelListTemplate},#{channelContentTemplate},#{metaTitle},
+		#{metaKeywords},#{metaDescription},now(),now())
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="long">
+		delete from channel where id = #{id}
+	</delete>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="Channel">
+		update channel
+		set
+		parent_id = #{parentId},
+		name = #{name},
+		path = #{path},
+		description = #{description},
+		channel_template = #{channelTemplate},
+		channel_list_template = #{channelListTemplate},
+		channel_content_template = #{channelContentTemplate},
+		meta_title = #{metaTitle},
+		meta_keywords = #{metaKeywords},
+		meta_description = #{metaDescription},
+		modify_time = now()
+		where id = #{id}
+	</update>
+
+</mapper> 

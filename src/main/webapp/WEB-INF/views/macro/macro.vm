@@ -1,0 +1,15 @@
+#macro(say $msg)
+    <p>$msg</p>
+#end
+
+##根据枚举生成options
+#macro(showOptionsByEnum $enumName $default)
+    #set($map = $enumTool.getEnumMap($enumName))
+	#foreach($key in $map.keySet())
+		#if($stringUtils.equals($key,$default)) 
+        <option value="$key" selected="selected" >${map.get($key).description}</option>
+		#else
+        <option value="$key">${map.get($key).description}</option>
+		#end
+	#end
+#end

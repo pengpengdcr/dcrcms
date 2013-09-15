@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dcr.cms.dao.UserDao">
+
+	<resultMap id="userMap" type="User">
+		<id property="id" column="id" />
+		<result property="userName" column="user_name" />
+		<result property="password" column="password" />
+		<result property="email" column="email" />
+		<result property="status" column="status" />
+		<result property="createTime" column="create_time" />
+		<result property="modifyTime" column="modify_time" />
+		<association property="userGroup" column="user_group_id" javaType="UserGroup">
+			<id property="id" column="group_id" />
+			<result property="groupName" column="group_name" />
+			<result property="description" column="description" />
+		</association>
+	</resultMap>
+
+	<!-- 分页条件查询 -->
+	<select id="query" parameterType="object" resultMap="userMap">
+		select u.id,u.user_name,u.password,u.email,u.status,u.user_group_id,u.create_time,u.modify_time,g.id as
+		group_id,g.group_name,g.description
+		from user u,user_group g
+		where u.user_group_id = g.id
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(userName)">
+			and u.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(email)">
+			and u.email like CONCAT('%',#{email},'%')
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(status)">
+			and u.status = #{status}
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(userGroupId)">
+			and u.user_group_id = #{userGroupId}
+		</if>
+		order by u.modify_time desc
+		limit #{limit},#{offset}
+	</select>
+
+	<!-- 分页条件查询 -COUNT -->
+	<select id="queryCount" parameterType="object" resultType="long">
+		select count(u.id)
+		from user u,user_group g
+		where u.user_group_id = g.id
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(userName)">
+			and u.user_name like CONCAT('%',#{userName},'%')
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(email)">
+			and u.email like CONCAT('%',#{email},'%')
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(status)">
+			and u.status = #{status}
+		</if>
+		<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(userGroupId)">
+			and u.user_group_id = #{userGroupId}
+		</if>
+	</select>
+
+	<!-- 根据id查找 -->
+	<select id="getById" parameterType="long" resultMap="userMap">
+		select
+		u.id,u.user_name,u.password,u.email,u.status,u.user_group_id,u.create_time,u.modify_time,g.id as
+		group_id,g.group_name,g.description
+		from user u,user_group g
+		where u.user_group_id = g.id and u.id = #{id}
+	</select>
+
+	<!-- 根据userName查找 -->
+	<select id="getByUserName" parameterType="string" resultMap="userMap">
+		select
+		u.id,u.user_name,u.password,u.email,u.status,u.user_group_id,,u.create_time,u.modify_time,g.id as
+		group_id,g.group_name,g.description
+		from user u,user_group g
+		where u.user_group_id = g.id and u.id = #{id}
+	</select>
+
+	<!-- 添加 -->
+	<insert id="add" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		insert into user (user_name, password,
+		email, status, user_group_id,create_time,modify_time)
+		values (#{userName}, #{password}, #{email}, #{status},
+		#{userGroup.id},now(),now())
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="delete" parameterType="long">
+		delete from user where id = #{id}
+	</delete>
+
+	<!-- 更新 -->
+	<update id="update" parameterType="User">
+		update user
+		set
+		user_name = #{userName},
+		password = #{password},
+		email = #{email},
+		status = #{status},
+		user_group_id = #{userGroup.id},
+		modify_time = now()
+		where id = #{id}
+	</update>
+
+</mapper> 
